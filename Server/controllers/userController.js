@@ -90,7 +90,7 @@ const getProperties = async (req, res) => {
   try {
     const { location, maxPrice, minPrice, propertyType, furnishingStatus, amenities } = req.query;
     
-    let query = { status: 'Available' };
+    let query = { status: { $in: ['Live', 'Published', 'Active', 'Available'] } };
     
     if (location) {
       query.location = { $regex: location, $options: 'i' };
@@ -158,6 +158,31 @@ const bookProperty = async (req, res) => {
       startDate,
       endDate,
       renterDetails
+    });
+    
+    // Auto-create Rent Request for owner dashboard integration
+    const RentRequest = require('../models/RentRequestSchema');
+    const Announcement = require('../models/AnnouncementSchema');
+    
+    await RentRequest.create({
+      property: propertyId,
+      tenant: req.user._id,
+      proposedRent: property.rentAmount,
+      preferredMoveInDate: startDate,
+      familySize: req.user.familySize || 2,
+      occupation: renterDetails.occupation || req.user.occupation || 'Engineer',
+      monthlyIncome: req.user.monthlyIncome || 60000,
+      rentalDuration: 12,
+      additionalNotes: renterDetails.notes || 'Looking forward to moving in soon!',
+      distanceFromProperty: Math.round((Math.random() * 4 + 1) * 10) / 10,
+      travelTime: `${15 + Math.round(Math.random() * 15)} mins`
+    });
+
+    // Send push notification to Owner
+    await Announcement.create({
+      type: 'Push',
+      title: 'New Rental Interest Submitted',
+      content: `${renterDetails.name || req.user.name} submitted an offer for property: ${property.title}`
     });
     
     res.status(201).json(booking);

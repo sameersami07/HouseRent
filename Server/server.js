@@ -5,6 +5,13 @@ const connectDB = require('./config/connect');
 const User = require('./models/UserSchema');
 const Property = require('./models/PropertySchema');
 const Booking = require('./models/BookingSchema');
+const Chat = require('./models/ChatSchema');
+const WalletTransaction = require('./models/WalletTransactionSchema');
+const Review = require('./models/ReviewSchema');
+const Complaint = require('./models/ComplaintSchema');
+const Announcement = require('./models/AnnouncementSchema');
+const CMS = require('./models/CmsSchema');
+const RentRequest = require('./models/RentRequestSchema');
 
 // Load env variables
 dotenv.config();
@@ -191,6 +198,133 @@ const seedAllData = async () => {
 
         console.log('Dummy bookings seeded successfully');
       }
+
+      // 6. Seed Chats
+      const chatCount = await Chat.countDocuments();
+      if (chatCount === 0) {
+        await Chat.create({
+          sender: renterAlice._id,
+          receiver: ownerJohn._id,
+          message: 'Hi John, is the Bayside Premium Penthouse still available for booking next Sunday?',
+          type: 'text',
+          read: true
+        });
+        await Chat.create({
+          sender: ownerJohn._id,
+          receiver: renterAlice._id,
+          message: 'Yes Alice! It is available. Let me know if you would like a virtual tour first.',
+          type: 'text',
+          read: false
+        });
+        console.log('Dummy chats seeded successfully');
+      }
+
+      // 7. Seed Wallet Transactions
+      const txCount = await WalletTransaction.countDocuments();
+      if (txCount === 0) {
+        await WalletTransaction.create({
+          user: ownerJohn._id,
+          amount: 4500,
+          type: 'credit',
+          status: 'Completed',
+          description: 'Rent payment for Sky Penthouse',
+          gst: 450,
+          commission: 225,
+          invoiceNumber: 'INV-2026-001'
+        });
+        await WalletTransaction.create({
+          user: ownerJohn._id,
+          amount: 1200,
+          type: 'withdrawal',
+          status: 'Pending',
+          description: 'Owner withdrawal request',
+          invoiceNumber: 'INV-2026-002'
+        });
+        console.log('Dummy transactions seeded successfully');
+      }
+
+      // 8. Seed Reviews
+      const reviewCount = await Review.countDocuments();
+      if (reviewCount === 0) {
+        const firstProp = await Property.findOne({ owner: ownerJohn._id });
+        if (firstProp) {
+          await Review.create({
+            property: firstProp._id,
+            tenant: renterAlice._id,
+            rating: 5,
+            comment: 'Stunning luxury villa. John is an excellent and helpful host!'
+          });
+        }
+        console.log('Dummy reviews seeded successfully');
+      }
+
+      // 9. Seed Complaints
+      const complaintCount = await Complaint.countDocuments();
+      if (complaintCount === 0) {
+        const firstProp = await Property.findOne({ owner: ownerJohn._id });
+        if (firstProp) {
+          await Complaint.create({
+            reportedBy: renterAlice._id,
+            property: firstProp._id,
+            owner: ownerJohn._id,
+            type: 'Wrong Information',
+            description: 'The property age seems older than listed in the description.',
+            priority: 'Low',
+            status: 'Open',
+            timeline: [{ status: 'Open', notes: 'Reported by Alice Tenant' }]
+          });
+        }
+        console.log('Dummy complaints seeded successfully');
+      }
+
+      // 10. Seed Rent Requests
+      const rentRequestCount = await RentRequest.countDocuments();
+      if (rentRequestCount === 0) {
+        const firstProp = await Property.findOne({ owner: ownerJohn._id });
+        if (firstProp) {
+          await RentRequest.create({
+            property: firstProp._id,
+            tenant: renterAlice._id,
+            proposedRent: 4300,
+            status: 'Negotiating',
+            counterOfferBy: ownerJohn._id,
+            counterOfferAmount: 4400,
+            agreementText: 'This agreement is made between John Landlord and Alice Tenant for the lease of Bayside Penthouse.'
+          });
+        }
+        console.log('Dummy rent requests seeded successfully');
+      }
+
+      // 11. Seed Announcements
+      const announceCount = await Announcement.countDocuments();
+      if (announceCount === 0) {
+        await Announcement.create({
+          type: 'Banner',
+          title: 'Summer Season Discount Campaign!',
+          content: 'Register your properties and boost your listings visibility for free during the summer season.'
+        });
+        console.log('Dummy announcements seeded successfully');
+      }
+
+      // 12. Seed CMS settings
+      const cmsCount = await CMS.countDocuments();
+      if (cmsCount === 0) {
+        await CMS.create({
+          key: 'homepage_banner',
+          value: {
+            title: 'Find your dream home with a premium experience.',
+            subtitle: 'Browse verified listings, book private tours, and discover neighborhoods that feel like home.'
+          }
+        });
+        await CMS.create({
+          key: 'faqs',
+          value: [
+            { q: 'How do I schedule a property tour?', a: 'Locate the property, click Get Info, fill out your renter details, and submit.' },
+            { q: 'Are all landlords verified?', a: 'Yes, our moderation team inspects and approves all owners before they can list properties.' }
+          ]
+        });
+        console.log('Dummy CMS options seeded successfully');
+      }
     }
   } catch (error) {
     console.error('Error seeding data:', error.message);
@@ -202,6 +336,7 @@ seedAllData();
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/owners', require('./routes/ownerRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 
 app.get('/', (req, res) => {
   res.send('HouseRent API is running...');

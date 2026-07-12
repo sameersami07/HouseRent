@@ -141,7 +141,7 @@ const updateBookingStatus = async (req, res) => {
       // Revert property status to Available if the confirmed booking is changed
       const hasOtherConfirmed = await Booking.findOne({ property: booking.property._id, status: 'Confirmed' });
       if (!hasOtherConfirmed) {
-        await Property.findByIdAndUpdate(booking.property._id, { status: 'Available' });
+        await Property.findByIdAndUpdate(booking.property._id, { status: 'Live' });
       }
     }
     

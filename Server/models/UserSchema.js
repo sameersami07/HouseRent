@@ -15,7 +15,18 @@ const UserSchema = new mongoose.Schema({
       // Admin and renters are auto-approved, owners require admin approval
       return this.userType !== 'owner';
     }
-  }
+  },
+  familySize: { type: Number, default: 1 },
+  occupation: { type: String, default: 'Professional' },
+  monthlyIncome: { type: Number, default: 45000 },
+  preferredMoveInDate: { type: Date },
+  rentalDuration: { type: Number, default: 12 },
+  additionalNotes: { type: String, default: '' },
+  kycStatus: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Property' }],
+  recentlyViewed: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Property' }],
+  latitude: { type: Number, default: 19.0760 },
+  longitude: { type: Number, default: 72.8777 }
 }, { timestamps: true });
 
 UserSchema.pre('save', async function() {
