@@ -1,0 +1,12 @@
+{
+  "name": "house-rent-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "Client",
+    "Server"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=Client"
+  }
+}
