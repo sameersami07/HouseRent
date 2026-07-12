@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Card, CardContent, TextField, Button, Typography, Box, Alert } from '@mui/material';
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
+import { ArrowRight, KeyRound, House, ShieldCheck } from 'lucide-react';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -22,7 +21,7 @@ const ForgotPassword = () => {
       const res = await axios.post('http://localhost:8000/api/users/forgot-password', {
         email,
         phone,
-        newPassword
+        newPassword,
       });
       setMessage(res.data.message || 'Password reset successful!');
       setEmail('');
@@ -36,115 +35,58 @@ const ForgotPassword = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', py: 4 }}>
-      <Container maxWidth="xs">
-        <Card sx={{ background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#fff', borderRadius: '20px', boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)' }}>
-          <CardContent sx={{ p: 4 }}>
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <Link to="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', color: '#fff', fontWeight: 800, gap: 1 }}>
-                <HomeWorkIcon sx={{ color: '#6366f1', fontSize: '2rem' }} />
-                <Typography variant="h5" sx={{ fontWeight: 800 }}>HouseHunt</Typography>
-              </Link>
-              <Typography variant="subtitle1" sx={{ color: '#94a3b8', mt: 1 }}>
-                Reset your password
-              </Typography>
-            </Box>
+    <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,_#f8fafc_0%,_#eef4ff_100%)] px-4 py-8 text-slate-900">
+      <div className="w-full max-w-md overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/90 shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur">
+        <div className="bg-gradient-to-br from-blue-600 to-violet-600 px-6 py-8 text-white">
+          <Link to="/" className="inline-flex items-center gap-2 text-lg font-semibold">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/20">
+              <House size={18} />
+            </div>
+            HouseHunt
+          </Link>
+          <div className="mt-6">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-medium">
+              <ShieldCheck size={15} /> Secure recovery
+            </div>
+            <h1 className="mt-3 text-2xl font-semibold">Reset your password</h1>
+            <p className="mt-2 text-sm text-blue-50">Use your verified details to update your account password safely.</p>
+          </div>
+        </div>
 
-            {error && <Alert severity="error" sx={{ mb: 3, borderRadius: '8px' }}>{error}</Alert>}
-            {message && <Alert severity="success" sx={{ mb: 3, borderRadius: '8px' }}>{message}</Alert>}
+        <div className="px-6 py-6 sm:px-8">
+          {error && <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>}
+          {message && <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{message}</div>}
 
-            <form onSubmit={handleSubmit}>
-              <TextField
-                label="Email Address"
-                type="email"
-                fullWidth
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{
-                  mb: 3,
-                  '& .MuiOutlinedInput-root': {
-                    color: '#fff',
-                    '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },
-                    '&:hover fieldset': { borderColor: '#6366f1' },
-                    '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                  },
-                  '& .MuiInputLabel-root': { color: '#94a3b8' },
-                  '& .MuiInputLabel-root.Mui-focused': { color: '#6366f1' }
-                }}
-              />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-slate-700">Email address</label>
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" placeholder="you@example.com" />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-slate-700">Phone number</label>
+              <input type="text" required value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" placeholder="Phone number" />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-slate-700">New password</label>
+              <div className="relative">
+                <KeyRound size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input type="password" required value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 py-3 pl-10 pr-4 text-sm outline-none transition focus:border-blue-500 focus:bg-white" placeholder="Create a strong password" />
+              </div>
+            </div>
 
-              <TextField
-                label="Phone Number"
-                type="text"
-                fullWidth
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                sx={{
-                  mb: 3,
-                  '& .MuiOutlinedInput-root': {
-                    color: '#fff',
-                    '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },
-                    '&:hover fieldset': { borderColor: '#6366f1' },
-                    '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                  },
-                  '& .MuiInputLabel-root': { color: '#94a3b8' },
-                  '& .MuiInputLabel-root.Mui-focused': { color: '#6366f1' }
-                }}
-              />
+            <button type="submit" disabled={loading} className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70">
+              {loading ? 'Updating...' : 'Update password'}
+              <ArrowRight size={16} />
+            </button>
+          </form>
 
-              <TextField
-                label="New Password"
-                type="password"
-                fullWidth
-                required
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                sx={{
-                  mb: 3,
-                  '& .MuiOutlinedInput-root': {
-                    color: '#fff',
-                    '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },
-                    '&:hover fieldset': { borderColor: '#6366f1' },
-                    '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                  },
-                  '& .MuiInputLabel-root': { color: '#94a3b8' },
-                  '& .MuiInputLabel-root.Mui-focused': { color: '#6366f1' }
-                }}
-              />
-
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                disabled={loading}
-                sx={{
-                  py: 1.5,
-                  backgroundColor: '#6366f1',
-                  '&:hover': { backgroundColor: '#4f46e5' },
-                  borderRadius: '10px',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: '1rem'
-                }}
-              >
-                {loading ? 'Updating...' : 'Update Password'}
-              </Button>
-            </form>
-
-            <Box sx={{ mt: 3, textAlign: 'center' }}>
-              <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-                Remember your password?{' '}
-                <Link to="/login" style={{ color: '#818cf8', textDecoration: 'none', fontWeight: 600 }}>
-                  Sign In
-                </Link>
-              </Typography>
-            </Box>
-          </CardContent>
-        </Card>
-      </Container>
-    </Box>
+          <p className="mt-5 text-center text-sm text-slate-500">
+            Remembered it?{' '}
+            <Link to="/login" className="font-semibold text-blue-600">Sign in</Link>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -2,16 +2,14 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../../../context/AuthContext';
-import { Container, Card, CardContent, TextField, Button, Typography, Box, Alert, MenuItem, FormGroup, FormControlLabel, Checkbox, Grid } from '@mui/material';
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { ArrowLeft, Home, Sparkles, PlusCircle } from 'lucide-react';
 
 const AMENITY_OPTIONS = ['WiFi', 'Parking', 'Pool', 'Gym', 'Pet-Friendly', 'Air Conditioning', 'Laundry', 'Furnished Kitchen', 'Balcony'];
 
 const AddProperty = () => {
   const { token, user } = useContext(AuthContext);
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -19,9 +17,9 @@ const AddProperty = () => {
     rentAmount: '',
     propertyType: 'Apartment',
     furnishingStatus: 'Unfurnished',
-    imageUrlString: ''
+    imageUrlString: '',
   });
-  
+
   const [selectedAmenities, setSelectedAmenities] = useState([]);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -41,7 +39,7 @@ const AddProperty = () => {
 
   const handleAmenityChange = (amenity) => {
     if (selectedAmenities.includes(amenity)) {
-      setSelectedAmenities(selectedAmenities.filter(item => item !== amenity));
+      setSelectedAmenities(selectedAmenities.filter((item) => item !== amenity));
     } else {
       setSelectedAmenities([...selectedAmenities, amenity]);
     }
@@ -53,8 +51,8 @@ const AddProperty = () => {
     setSuccess('');
     setLoading(true);
 
-    const images = formData.imageUrlString 
-      ? formData.imageUrlString.split(',').map(url => url.trim()).filter(url => url !== '')
+    const images = formData.imageUrlString
+      ? formData.imageUrlString.split(',').map((url) => url.trim()).filter((url) => url !== '')
       : [];
 
     const propertyPayload = {
@@ -65,13 +63,13 @@ const AddProperty = () => {
       propertyType: formData.propertyType,
       furnishingStatus: formData.furnishingStatus,
       amenities: selectedAmenities,
-      images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80']
+      images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80'],
     };
 
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       await axios.post('http://localhost:8000/api/owners/properties', propertyPayload, config);
-      
+
       setSuccess('Property listed successfully!');
       setTimeout(() => {
         navigate('/owner/properties');
@@ -84,244 +82,99 @@ const AddProperty = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#0f172a', color: '#f8fafc', pb: 8 }}>
-      {/* Header */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-transparent border-bottom border-secondary py-3 mb-5">
-        <div className="container">
-          <Link className="navbar-brand d-flex align-items-center text-white fw-bold fs-3" to="/owner">
-            <HomeWorkIcon sx={{ mr: 1, color: '#6366f1', fontSize: '2rem' }} />
-            HouseHunt
-          </Link>
-          <Link to="/owner" style={{ textDecoration: 'none' }}>
-            <Button variant="outlined" startIcon={<ArrowBackIcon />} sx={{ color: '#fff', borderColor: 'rgba(255,255,255,0.2)', borderRadius: '8px' }}>
-              Back to Dashboard
-            </Button>
-          </Link>
+    <div className="min-h-screen bg-[linear-gradient(135deg,_#f8fafc_0%,_#eef4ff_100%)] px-4 py-4 text-slate-900 sm:px-6 lg:px-8">
+      <header className="mx-auto mb-6 flex max-w-6xl items-center justify-between rounded-[28px] border border-white/70 bg-white/80 px-5 py-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-xl">
+        <Link to="/owner" className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-lg">
+            <Home size={20} />
+          </div>
+          <span className="font-[Poppins] text-xl font-semibold">HouseHunt</span>
+        </Link>
+        <Link to="/owner" className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-500 hover:text-blue-600">
+          <ArrowLeft size={16} /> Back to dashboard
+        </Link>
+      </header>
+
+      <main className="mx-auto max-w-6xl rounded-[28px] border border-white/80 bg-white/80 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
+              <Sparkles size={16} /> New listing
+            </div>
+            <h1 className="mt-3 font-[Poppins] text-3xl font-semibold text-slate-900">Add a new property</h1>
+            <p className="mt-2 text-sm text-slate-600">Create a polished listing that feels as premium as the homes you’re offering.</p>
+          </div>
         </div>
-      </nav>
 
-      <Container maxWidth="md">
-        <Card sx={{ background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#fff', borderRadius: '20px' }}>
-          <CardContent sx={{ p: 5 }}>
-            <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
-              Add a New Property
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#94a3b8', mb: 4 }}>
-              Fill in the form details below to list a new property for rent.
-            </Typography>
+        {error && <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>}
+        {success && <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{success}</div>}
 
-            {error && <Alert severity="error" sx={{ mb: 3, borderRadius: '8px' }}>{error}</Alert>}
-            {success && <Alert severity="success" sx={{ mb: 3, borderRadius: '8px' }}>{success}</Alert>}
+        <form onSubmit={handleSubmit} className="mt-8 grid gap-4 md:grid-cols-2">
+          <div className="md:col-span-2">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">Listing title</label>
+            <input name="title" required value={formData.title} onChange={handleChange} placeholder="Spacious 2BHK apartment near downtown" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" />
+          </div>
 
-            <form onSubmit={handleSubmit}>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={8}>
-                  <TextField
-                    label="Listing Title"
-                    name="title"
-                    required
-                    fullWidth
-                    value={formData.title}
-                    onChange={handleChange}
-                    placeholder="e.g. Spacious 2BHK Apartment in Downtown"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                        '&:hover fieldset': { borderColor: '#6366f1' },
-                        '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                      },
-                      '& .MuiInputLabel-root': { color: '#94a3b8' }
-                    }}
-                  />
-                </Grid>
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">Rent amount</label>
+            <input name="rentAmount" type="number" required value={formData.rentAmount} onChange={handleChange} placeholder="1200" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" />
+          </div>
 
-                <Grid item xs={12} sm={4}>
-                  <TextField
-                    label="Rent Amount (per month in $)"
-                    name="rentAmount"
-                    type="number"
-                    required
-                    fullWidth
-                    value={formData.rentAmount}
-                    onChange={handleChange}
-                    placeholder="e.g. 1200"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                        '&:hover fieldset': { borderColor: '#6366f1' },
-                        '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                      },
-                      '& .MuiInputLabel-root': { color: '#94a3b8' }
-                    }}
-                  />
-                </Grid>
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">Property type</label>
+            <select name="propertyType" value={formData.propertyType} onChange={handleChange} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white">
+              <option value="Apartment">Apartment</option>
+              <option value="House">House</option>
+              <option value="Condo">Condo</option>
+              <option value="Studio">Studio</option>
+              <option value="Villa">Villa</option>
+            </select>
+          </div>
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Detailed Description"
-                    name="description"
-                    required
-                    multiline
-                    rows={4}
-                    fullWidth
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder="Provide details about rooms, neighborhood, conditions..."
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                        '&:hover fieldset': { borderColor: '#6366f1' },
-                        '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                      },
-                      '& .MuiInputLabel-root': { color: '#94a3b8' }
-                    }}
-                  />
-                </Grid>
+          <div className="md:col-span-2">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">Description</label>
+            <textarea name="description" required rows={4} value={formData.description} onChange={handleChange} placeholder="Describe your home’s best features and neighborhood perks" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" />
+          </div>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Address / Location"
-                    name="location"
-                    required
-                    fullWidth
-                    value={formData.location}
-                    onChange={handleChange}
-                    placeholder="e.g. Manhattan, New York"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                        '&:hover fieldset': { borderColor: '#6366f1' },
-                        '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                      },
-                      '& .MuiInputLabel-root': { color: '#94a3b8' }
-                    }}
-                  />
-                </Grid>
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">Location</label>
+            <input name="location" required value={formData.location} onChange={handleChange} placeholder="Manhattan, New York" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" />
+          </div>
 
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    select
-                    label="Property Type"
-                    name="propertyType"
-                    fullWidth
-                    value={formData.propertyType}
-                    onChange={handleChange}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                        '&:hover fieldset': { borderColor: '#6366f1' },
-                        '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                      },
-                      '& .MuiInputLabel-root': { color: '#94a3b8' }
-                    }}
-                  >
-                    <MenuItem value="Apartment">Apartment</MenuItem>
-                    <MenuItem value="House">House</MenuItem>
-                    <MenuItem value="Condo">Condo</MenuItem>
-                    <MenuItem value="Studio">Studio</MenuItem>
-                    <MenuItem value="Villa">Villa</MenuItem>
-                  </TextField>
-                </Grid>
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">Furnishing status</label>
+            <select name="furnishingStatus" value={formData.furnishingStatus} onChange={handleChange} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white">
+              <option value="Furnished">Furnished</option>
+              <option value="Semi-Furnished">Semi-Furnished</option>
+              <option value="Unfurnished">Unfurnished</option>
+            </select>
+          </div>
 
-                <Grid item xs={12} sm={3}>
-                  <TextField
-                    select
-                    label="Furnishing Status"
-                    name="furnishingStatus"
-                    fullWidth
-                    value={formData.furnishingStatus}
-                    onChange={handleChange}
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                        '&:hover fieldset': { borderColor: '#6366f1' },
-                        '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                      },
-                      '& .MuiInputLabel-root': { color: '#94a3b8' }
-                    }}
-                  >
-                    <MenuItem value="Furnished">Furnished</MenuItem>
-                    <MenuItem value="Semi-Furnished">Semi-Furnished</MenuItem>
-                    <MenuItem value="Unfurnished">Unfurnished</MenuItem>
-                  </TextField>
-                </Grid>
+          <div className="md:col-span-2">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">Image URL(s)</label>
+            <input name="imageUrlString" value={formData.imageUrlString} onChange={handleChange} placeholder="https://domain.com/img1.jpg, https://domain.com/img2.jpg" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" />
+          </div>
 
-                <Grid item xs={12}>
-                  <TextField
-                    label="Image URL(s) (Comma-separated)"
-                    name="imageUrlString"
-                    fullWidth
-                    value={formData.imageUrlString}
-                    onChange={handleChange}
-                    placeholder="e.g. https://domain.com/img1.jpg, https://domain.com/img2.jpg"
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.1)' },
-                        '&:hover fieldset': { borderColor: '#6366f1' },
-                        '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                      },
-                      '& .MuiInputLabel-root': { color: '#94a3b8' }
-                    }}
-                  />
-                </Grid>
+          <div className="md:col-span-2">
+            <label className="mb-2 block text-sm font-semibold text-slate-700">Amenities</label>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {AMENITY_OPTIONS.map((amenity) => (
+                <label key={amenity} className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                  <input type="checkbox" checked={selectedAmenities.includes(amenity)} onChange={() => handleAmenityChange(amenity)} className="accent-blue-600" />
+                  {amenity}
+                </label>
+              ))}
+            </div>
+          </div>
 
-                <Grid item xs={12}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, color: '#a5b4fc' }}>
-                    Amenities Included
-                  </Typography>
-                  <FormGroup row>
-                    <Grid container spacing={1}>
-                      {AMENITY_OPTIONS.map((amenity, idx) => (
-                        <Grid item xs={6} sm={4} key={idx}>
-                          <FormControlLabel
-                            control={
-                              <Checkbox 
-                                checked={selectedAmenities.includes(amenity)}
-                                onChange={() => handleAmenityChange(amenity)}
-                                sx={{ color: 'rgba(255, 255, 255, 0.3)', '&.Mui-checked': { color: '#6366f1' } }}
-                              />
-                            }
-                            label={amenity}
-                            sx={{ color: '#cbd5e1' }}
-                          />
-                        </Grid>
-                      ))}
-                    </Grid>
-                  </FormGroup>
-                </Grid>
-              </Grid>
-
-              <Button
-                type="submit"
-                variant="contained"
-                size="large"
-                disabled={loading}
-                sx={{
-                  py: 1.5,
-                  mt: 4,
-                  backgroundColor: '#6366f1',
-                  '&:hover': { backgroundColor: '#4f46e5' },
-                  borderRadius: '10px',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                  float: 'right'
-                }}
-              >
-                {loading ? 'Submitting Listing...' : 'Publish Property'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </Container>
-    </Box>
+          <div className="md:col-span-2 flex justify-end">
+            <button type="submit" disabled={loading} className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70">
+              <PlusCircle size={18} /> {loading ? 'Publishing listing...' : 'Publish property'}
+            </button>
+          </div>
+        </form>
+      </main>
+    </div>
   );
 };
 

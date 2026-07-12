@@ -2,9 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
-import { Container, Typography, Button, Box, CircularProgress, Alert, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Chip } from '@mui/material';
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { ArrowLeft, Building2, Sparkles } from 'lucide-react';
 
 const AllUsers = () => {
   const { token } = useContext(AuthContext);
@@ -37,7 +35,7 @@ const AllUsers = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       await axios.put(`http://localhost:8000/api/admin/users/${id}/approve`, {
-        isApproved: !currentApprovalStatus
+        isApproved: !currentApprovalStatus,
       }, config);
       fetchUsers();
     } catch (err) {
@@ -45,102 +43,73 @@ const AllUsers = () => {
     }
   };
 
-  const getUserTypeChip = (type) => {
-    if (type === 'owner') {
-      return <Chip label="Owner" color="primary" size="small" sx={{ fontWeight: 700 }} />;
-    }
-    return <Chip label="Renter" color="secondary" size="small" sx={{ fontWeight: 700 }} />;
-  };
-
   if (loading) {
     return (
-      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a' }}>
-        <CircularProgress sx={{ color: '#6366f1' }} />
-      </Box>
+      <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,_#f8fafc_0%,_#eef4ff_100%)] text-slate-700">
+        <div className="rounded-3xl border border-slate-200/80 bg-white/80 px-8 py-6 shadow-xl backdrop-blur">Loading user directory…</div>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#0f172a', color: '#f8fafc', pb: 8 }}>
-      {/* Header */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-transparent border-bottom border-secondary py-3 mb-5">
-        <div className="container">
-          <Link className="navbar-brand d-flex align-items-center text-white fw-bold fs-3" to="/admin">
-            <HomeWorkIcon sx={{ mr: 1, color: '#6366f1', fontSize: '2rem' }} />
-            HouseHunt
-          </Link>
-          <Link to="/admin" style={{ textDecoration: 'none' }}>
-            <Button variant="outlined" startIcon={<ArrowBackIcon />} sx={{ color: '#fff', borderColor: 'rgba(255,255,255,0.2)', borderRadius: '8px' }}>
-              Back to Dashboard
-            </Button>
-          </Link>
+    <div className="min-h-screen bg-[linear-gradient(135deg,_#f8fafc_0%,_#eef4ff_100%)] px-4 py-4 text-slate-900 sm:px-6 lg:px-8">
+      <header className="mx-auto mb-6 flex max-w-7xl items-center justify-between rounded-[28px] border border-white/70 bg-white/80 px-5 py-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-xl">
+        <Link to="/admin" className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-lg">
+            <Building2 size={20} />
+          </div>
+          <span className="font-[Poppins] text-xl font-semibold">HouseHunt</span>
+        </Link>
+        <Link to="/admin" className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-500 hover:text-blue-600">
+          <ArrowLeft size={16} /> Back to dashboard
+        </Link>
+      </header>
+
+      <main className="mx-auto max-w-7xl">
+        <div className="mb-6 rounded-[24px] border border-white/80 bg-white/80 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur">
+          <div className="inline-flex items-center gap-2 rounded-full bg-violet-50 px-3 py-1 text-sm font-semibold text-violet-700">
+            <Sparkles size={16} /> User management
+          </div>
+          <h1 className="mt-3 font-[Poppins] text-3xl font-semibold text-slate-900">User directory and verification</h1>
+          <p className="mt-2 text-sm text-slate-600">Review accounts, verify owners, and keep the platform community trusted.</p>
         </div>
-      </nav>
 
-      <Container maxWidth="lg">
-        <Typography variant="h4" sx={{ fontWeight: 800, mb: 4 }}>
-          User Directory & Verification
-        </Typography>
+        {error && <div className="mb-6 rounded-[24px] border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">{error}</div>}
 
-        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-
-        <TableContainer component={Paper} sx={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '16px', overflow: 'hidden' }}>
-          <Table>
-            <TableHead sx={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
-              <TableRow>
-                <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Profile</TableCell>
-                <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Email Address</TableCell>
-                <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Phone</TableCell>
-                <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Role</TableCell>
-                <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Location</TableCell>
-                <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Approval Status</TableCell>
-                <TableCell align="right" sx={{ color: '#a5b4fc', fontWeight: 700 }}>Action</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {users.map((item) => (
-                <TableRow key={item._id} sx={{ '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.02)' } }}>
-                  <TableCell sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <img 
-                      src={item.profileImage || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"} 
-                      alt={item.name} 
-                      style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }}
-                    />
-                    <span style={{ fontWeight: 600 }}>{item.name}</span>
-                  </TableCell>
-                  <TableCell sx={{ color: '#cbd5e1' }}>{item.email}</TableCell>
-                  <TableCell sx={{ color: '#cbd5e1' }}>{item.phone}</TableCell>
-                  <TableCell>
-                    {getUserTypeChip(item.userType)}
-                  </TableCell>
-                  <TableCell sx={{ color: '#cbd5e1' }}>{item.currentLocation || 'Not Specified'}</TableCell>
-                  <TableCell>
-                    {item.isApproved ? (
-                      <Chip label="Approved" color="success" size="small" variant="outlined" sx={{ fontWeight: 600 }} />
-                    ) : (
-                      <Chip label="Pending" color="warning" size="small" variant="outlined" sx={{ fontWeight: 600 }} />
-                    )}
-                  </TableCell>
-                  <TableCell align="right">
-                    {item.userType === 'owner' && (
-                      <Button
-                        variant="contained"
-                        size="small"
-                        color={item.isApproved ? 'error' : 'success'}
-                        onClick={() => handleApproveOwner(item._id, item.isApproved)}
-                        sx={{ textTransform: 'none', fontWeight: 600 }}
-                      >
-                        {item.isApproved ? 'Revoke Approval' : 'Approve Owner'}
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Container>
-    </Box>
+        <div className="grid gap-4 lg:grid-cols-2">
+          {users.map((item) => (
+            <div key={item._id} className="rounded-[24px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <img src={item.profileImage || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'} alt={item.name} className="h-12 w-12 rounded-full object-cover" />
+                  <div>
+                    <div className="font-[Poppins] text-lg font-semibold text-slate-900">{item.name}</div>
+                    <div className="text-sm text-slate-500">{item.email}</div>
+                  </div>
+                </div>
+                <span className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${item.userType === 'owner' ? 'bg-blue-50 text-blue-700' : 'bg-violet-50 text-violet-700'}`}>
+                  {item.userType}
+                </span>
+              </div>
+              <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
+                <div><span className="font-semibold text-slate-800">Phone:</span> {item.phone}</div>
+                <div><span className="font-semibold text-slate-800">Location:</span> {item.currentLocation || 'Not specified'}</div>
+              </div>
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${item.isApproved ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+                  {item.isApproved ? 'Approved' : 'Pending approval'}
+                </span>
+                {item.userType === 'owner' && (
+                  <button onClick={() => handleApproveOwner(item._id, item.isApproved)} className={`rounded-full px-3 py-1 text-xs font-semibold ${item.isApproved ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'}`}>
+                    {item.isApproved ? 'Revoke approval' : 'Approve owner'}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
   );
 };
 

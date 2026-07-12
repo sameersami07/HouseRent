@@ -1,16 +1,16 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import { AuthContext } from '../../context/AuthContext';
-import { Container, Card, CardContent, TextField, Button, Typography, Box, Alert } from '@mui/material';
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
+import { Home, Lock, Mail, Sparkles } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -21,11 +21,9 @@ const Login = () => {
 
     try {
       const res = await axios.post('http://localhost:8000/api/users/login', { email, password });
-      
       const { token, ...userData } = res.data;
       login(userData, token);
 
-      // Redirect depending on user role
       if (userData.userType === 'admin') {
         navigate('/admin');
       } else if (userData.userType === 'owner') {
@@ -41,102 +39,63 @@ const Login = () => {
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', py: 4 }}>
-      <Container maxWidth="xs">
-        <Card sx={{ background: 'rgba(255, 255, 255, 0.03)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255, 255, 255, 0.1)', color: '#fff', borderRadius: '20px', boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)' }}>
-          <CardContent sx={{ p: 4 }}>
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <Link to="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', color: '#fff', fontWeight: 800, gap: 1 }}>
-                <HomeWorkIcon sx={{ color: '#6366f1', fontSize: '2rem' }} />
-                <Typography variant="h5" sx={{ fontWeight: 800 }}>HouseHunt</Typography>
-              </Link>
-              <Typography variant="subtitle1" sx={{ color: '#94a3b8', mt: 1 }}>
-                Sign in to your account
-              </Typography>
-            </Box>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.16),transparent_30%),linear-gradient(120deg,_#f8fafc_0%,_#eef4ff_100%)] px-4 py-8 text-slate-900 sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-7xl overflow-hidden rounded-[32px] border border-white/70 bg-white/75 shadow-[0_30px_80px_rgba(15,23,42,0.12)] backdrop-blur-xl">
+        <div className="relative hidden flex-1 items-end justify-center overflow-hidden bg-gradient-to-br from-blue-700 via-blue-600 to-violet-700 p-10 lg:flex">
+          <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=80" alt="Modern home" className="absolute inset-0 h-full w-full object-cover opacity-40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-900/25 to-transparent" />
+          <div className="relative z-10 max-w-md text-white">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 text-sm backdrop-blur">
+              <Sparkles size={16} />
+              Welcome back to HouseHunt
+            </div>
+            <h2 className="mt-5 text-4xl font-semibold leading-tight">Discover spaces that feel like home.</h2>
+            <p className="mt-4 text-sm leading-7 text-slate-200">Book visits, contact owners, and manage your dream property journey in one elegant dashboard.</p>
+          </div>
+        </div>
 
-            {error && <Alert severity="error" sx={{ mb: 3, borderRadius: '8px' }}>{error}</Alert>}
+        <motion.div initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className="flex-1 p-6 sm:p-8 lg:p-10">
+          <Link to="/" className="mb-8 inline-flex items-center gap-3 font-semibold text-slate-700">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-lg">
+              <Home size={18} />
+            </div>
+            HouseHunt
+          </Link>
 
-            <form onSubmit={handleSubmit}>
-              <TextField
-                label="Email Address"
-                type="email"
-                fullWidth
-                required
-                variant="outlined"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                sx={{
-                  mb: 3,
-                  '& .MuiOutlinedInput-root': {
-                    color: '#fff',
-                    '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },
-                    '&:hover fieldset': { borderColor: '#6366f1' },
-                    '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                  },
-                  '& .MuiInputLabel-root': { color: '#94a3b8' },
-                  '& .MuiInputLabel-root.Mui-focused': { color: '#6366f1' }
-                }}
-              />
+          <div className="mx-auto max-w-md">
+            <h1 className="font-[Poppins] text-3xl font-semibold text-slate-900">Sign in</h1>
+            <p className="mt-2 text-sm text-slate-500">Access your account and continue your property search.</p>
 
-              <TextField
-                label="Password"
-                type="password"
-                fullWidth
-                required
-                variant="outlined"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                sx={{
-                  mb: 3,
-                  '& .MuiOutlinedInput-root': {
-                    color: '#fff',
-                    '& fieldset': { borderColor: 'rgba(255, 255, 255, 0.2)' },
-                    '&:hover fieldset': { borderColor: '#6366f1' },
-                    '&.Mui-focused fieldset': { borderColor: '#6366f1' }
-                  },
-                  '& .MuiInputLabel-root': { color: '#94a3b8' },
-                  '& .MuiInputLabel-root.Mui-focused': { color: '#6366f1' }
-                }}
-              />
+            {error && <div className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>}
 
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
-                <Link to="/forgot-password" style={{ color: '#818cf8', textDecoration: 'none', fontSize: '0.875rem' }}>
-                  Forgot Password?
-                </Link>
-              </Box>
+            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+              <label className="block rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 shadow-sm">
+                <span className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-600"><Mail size={16} /> Email</span>
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border-none bg-transparent text-sm outline-none" placeholder="you@example.com" />
+              </label>
 
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                disabled={loading}
-                sx={{
-                  py: 1.5,
-                  backgroundColor: '#6366f1',
-                  '&:hover': { backgroundColor: '#4f46e5' },
-                  borderRadius: '10px',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: '1rem'
-                }}
-              >
-                {loading ? 'Signing in...' : 'Sign In'}
-              </Button>
+              <label className="block rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 shadow-sm">
+                <span className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-600"><Lock size={16} /> Password</span>
+                <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border-none bg-transparent text-sm outline-none" placeholder="••••••••" />
+              </label>
+
+              <div className="flex items-center justify-between text-sm">
+                <label className="flex items-center gap-2 text-slate-500"><input type="checkbox" className="rounded border-slate-300" /> Remember me</label>
+                <Link to="/forgot-password" className="font-semibold text-blue-600">Forgot password?</Link>
+              </div>
+
+              <button type="submit" disabled={loading} className="w-full rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-3 font-semibold text-white shadow-lg shadow-blue-200 transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70">
+                {loading ? 'Signing in...' : 'Sign in'}
+              </button>
             </form>
 
-            <Box sx={{ mt: 3, textAlign: 'center' }}>
-              <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-                Don't have an account?{' '}
-                <Link to="/register" style={{ color: '#818cf8', textDecoration: 'none', fontWeight: 600 }}>
-                  Register
-                </Link>
-              </Typography>
-            </Box>
-          </CardContent>
-        </Card>
-      </Container>
-    </Box>
+            <div className="mt-6 text-center text-sm text-slate-500">
+              Don’t have an account? <Link to="/register" className="font-semibold text-blue-600">Create one</Link>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
   );
 };
 

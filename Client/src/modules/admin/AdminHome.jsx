@@ -1,14 +1,9 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import { AuthContext } from '../../context/AuthContext';
-import { Container, Grid, Typography, Card, CardContent, Button, Box, CircularProgress, Alert } from '@mui/material';
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import LogoutIcon from '@mui/icons-material/Logout';
-import PeopleIcon from '@mui/icons-material/People';
-import DomainIcon from '@mui/icons-material/Domain';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Building2, LogOut, Users, House, CalendarDays, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
 
 const AdminHome = () => {
   const { user, token, logout } = useContext(AuthContext);
@@ -45,199 +40,93 @@ const AdminHome = () => {
 
   if (loading) {
     return (
-      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a' }}>
-        <CircularProgress sx={{ color: '#6366f1' }} />
-      </Box>
+      <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,_#f8fafc_0%,_#eef4ff_100%)] text-slate-700">
+        <div className="rounded-3xl border border-slate-200/80 bg-white/80 px-8 py-6 shadow-xl backdrop-blur">Loading admin insights…</div>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#0f172a', color: '#f8fafc', pb: 8 }}>
-      {/* Header */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-transparent border-bottom border-secondary py-3 mb-5">
-        <div className="container">
-          <Link className="navbar-brand d-flex align-items-center text-white fw-bold fs-3" to="/admin">
-            <HomeWorkIcon sx={{ mr: 1, color: '#6366f1', fontSize: '2rem' }} />
-            HouseHunt <span className="badge bg-danger ms-2 fs-6">Admin Panel</span>
-          </Link>
-          <div className="d-flex align-items-center gap-3">
-            <Box className="d-none d-md-block text-end">
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>System Administrator</Typography>
-              <Typography variant="caption" sx={{ color: '#94a3b8' }}>{user?.email}</Typography>
-            </Box>
-            <Button onClick={handleLogout} variant="outlined" color="error" startIcon={<LogoutIcon />} sx={{ borderRadius: '8px' }}>
-              Logout
-            </Button>
+    <div className="min-h-screen bg-[linear-gradient(135deg,_#f8fafc_0%,_#eef4ff_100%)] px-4 py-4 text-slate-900 sm:px-6 lg:px-8">
+      <header className="mx-auto mb-6 flex max-w-7xl items-center justify-between rounded-[28px] border border-white/70 bg-white/80 px-5 py-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-xl">
+        <Link to="/admin" className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-lg">
+            <Building2 size={20} />
           </div>
+          <span className="font-[Poppins] text-xl font-semibold">HouseHunt</span>
+        </Link>
+        <div className="flex items-center gap-3">
+          <div className="hidden text-right md:block">
+            <div className="text-sm font-semibold text-slate-900">System Administrator</div>
+            <div className="text-xs text-slate-500">{user?.email}</div>
+          </div>
+          <button onClick={handleLogout} className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-red-300 hover:text-red-600">
+            <LogOut size={16} /> Logout
+          </button>
         </div>
-      </nav>
+      </header>
 
-      <Container maxWidth="lg">
-        <Typography variant="h4" sx={{ fontWeight: 800, mb: 4 }}>
-          Administrative Overview
-        </Typography>
+      <main className="mx-auto max-w-7xl">
+        {error && <div className="mb-6 rounded-[24px] border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">{error}</div>}
 
-        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-
-        {/* Highlight banner for owner verification */}
         {stats?.pendingOwners > 0 && (
-          <Alert severity="info" action={
-            <Link to="/admin/users" style={{ textDecoration: 'none' }}>
-              <Button color="inherit" size="small" sx={{ fontWeight: 700 }}>Review Now</Button>
-            </Link>
-          } sx={{ mb: 4, borderRadius: '12px' }}>
-            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Pending Landlord Registrations</Typography>
-            <Typography variant="body2">There are {stats?.pendingOwners} landlord accounts awaiting manual verification and approval.</Typography>
-          </Alert>
+          <div className="mb-6 flex flex-col gap-3 rounded-[24px] border border-blue-100 bg-blue-50/80 px-5 py-4 text-sm text-blue-800 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="font-semibold">Pending landlord approvals</div>
+              <div className="mt-1">{stats.pendingOwners} new owner accounts need review.</div>
+            </div>
+            <Link to="/admin/users" className="inline-flex items-center gap-2 font-semibold text-blue-700">Review now <ArrowRight size={16} /></Link>
+          </div>
         )}
 
-        {/* Stats cards grid */}
-        <Grid container spacing={3} sx={{ mb: 6 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#fff', borderRadius: '16px' }}>
-              <CardContent sx={{ p: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 600 }}>Total Users</Typography>
-                  <PeopleIcon sx={{ color: '#6366f1' }} />
-                </Box>
-                <Typography variant="h3" sx={{ fontWeight: 800 }}>{stats?.totalUsers}</Typography>
-                <Typography variant="caption" sx={{ color: '#64748b' }}>
-                  {stats?.totalRenters} Renters / {stats?.totalOwners} Owners
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+        <motion.section initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="glass-panel p-6 sm:p-8 lg:p-10">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-violet-50 px-3 py-1 text-sm font-semibold text-violet-700">
+                <Sparkles size={16} /> Admin overview
+              </div>
+              <h1 className="mt-3 font-[Poppins] text-3xl font-semibold text-slate-900">Operational pulse at a glance</h1>
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-600">Monitor platform activity, manage approvals, and stay ahead of growth with a premium admin experience.</p>
+            </div>
+          </div>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#fff', borderRadius: '16px' }}>
-              <CardContent sx={{ p: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 600 }}>Total Properties</Typography>
-                  <DomainIcon sx={{ color: '#38bdf8' }} />
-                </Box>
-                <Typography variant="h3" sx={{ fontWeight: 800 }}>{stats?.totalProperties}</Typography>
-                <Typography variant="caption" sx={{ color: '#64748b' }}>Properties in Platform</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
+          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {[
+              { title: 'Total users', value: stats?.totalUsers, icon: Users, tone: 'from-blue-600 to-cyan-500' },
+              { title: 'Properties', value: stats?.totalProperties, icon: House, tone: 'from-violet-600 to-purple-500' },
+              { title: 'Bookings', value: stats?.totalBookings, icon: CalendarDays, tone: 'from-emerald-600 to-green-500' },
+              { title: 'Verification queue', value: stats?.pendingOwners, icon: ShieldCheck, tone: 'from-rose-500 to-orange-500' },
+            ].map((card) => {
+              const Icon = card.icon;
+              return (
+                <div key={card.title} className="rounded-[24px] border border-slate-200/70 bg-slate-50/80 p-5 shadow-sm">
+                  <div className={`inline-flex rounded-2xl bg-gradient-to-br ${card.tone} p-2 text-white`}>
+                    <Icon size={18} />
+                  </div>
+                  <div className="mt-4 font-[Poppins] text-3xl font-semibold text-slate-900">{card.value ?? 0}</div>
+                  <div className="mt-1 text-sm text-slate-500">{card.title}</div>
+                </div>
+              );
+            })}
+          </div>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#fff', borderRadius: '16px' }}>
-              <CardContent sx={{ p: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 600 }}>Bookings Placed</Typography>
-                  <AssignmentIcon sx={{ color: '#34d399' }} />
-                </Box>
-                <Typography variant="h3" sx={{ fontWeight: 800 }}>{stats?.totalBookings}</Typography>
-                <Typography variant="caption" sx={{ color: '#64748b' }}>Total application logs</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#fff', borderRadius: '16px' }}>
-              <CardContent sx={{ p: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 600 }}>Verification Queue</Typography>
-                  <WarningAmberIcon sx={{ color: '#e11d48' }} />
-                </Box>
-                <Typography variant="h3" sx={{ fontWeight: 800, color: stats?.pendingOwners > 0 ? '#f43f5e' : '#fff' }}>
-                  {stats?.pendingOwners}
-                </Typography>
-                <Typography variant="caption" sx={{ color: '#64748b' }}>Landlords pending approval</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        {/* Administration shortcuts */}
-        <Typography variant="h5" sx={{ fontWeight: 700, mb: 3 }}>
-          Management Sections
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={4}>
-            <Link to="/admin/users" style={{ textDecoration: 'none' }}>
-              <Button
-                variant="outlined"
-                fullWidth
-                startIcon={<PeopleIcon />}
-                sx={{
-                  py: 3,
-                  borderColor: '#6366f1',
-                  color: '#fff',
-                  fontSize: '1.1rem',
-                  textTransform: 'none',
-                  borderRadius: '16px',
-                  borderWidth: '2px',
-                  backgroundColor: 'rgba(99, 102, 241, 0.05)',
-                  '&:hover': {
-                    borderWidth: '2px',
-                    borderColor: '#4f46e5',
-                    backgroundColor: 'rgba(99, 102, 241, 0.1)'
-                  }
-                }}
-              >
-                Manage User Accounts
-              </Button>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <Link to="/admin/users" className="rounded-[24px] border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-5 text-left transition hover:-translate-y-1">
+              <div className="font-semibold text-slate-900">Manage user accounts</div>
+              <div className="mt-2 text-sm text-slate-600">Review renters, approve owners, and keep your platform secure.</div>
             </Link>
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <Link to="/admin/properties" style={{ textDecoration: 'none' }}>
-              <Button
-                variant="outlined"
-                fullWidth
-                startIcon={<DomainIcon />}
-                sx={{
-                  py: 3,
-                  borderColor: '#38bdf8',
-                  color: '#fff',
-                  fontSize: '1.1rem',
-                  textTransform: 'none',
-                  borderRadius: '16px',
-                  borderWidth: '2px',
-                  backgroundColor: 'rgba(56, 189, 248, 0.05)',
-                  '&:hover': {
-                    borderWidth: '2px',
-                    borderColor: '#0284c7',
-                    backgroundColor: 'rgba(56, 189, 248, 0.1)'
-                  }
-                }}
-              >
-                Oversee Properties
-              </Button>
+            <Link to="/admin/properties" className="rounded-[24px] border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-1">
+              <div className="font-semibold text-slate-900">Oversee listings</div>
+              <div className="mt-2 text-sm text-slate-600">Inspect every property and ensure the catalog stays high quality.</div>
             </Link>
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <Link to="/admin/bookings" style={{ textDecoration: 'none' }}>
-              <Button
-                variant="outlined"
-                fullWidth
-                startIcon={<AssignmentIcon />}
-                sx={{
-                  py: 3,
-                  borderColor: '#34d399',
-                  color: '#fff',
-                  fontSize: '1.1rem',
-                  textTransform: 'none',
-                  borderRadius: '16px',
-                  borderWidth: '2px',
-                  backgroundColor: 'rgba(52, 211, 153, 0.05)',
-                  '&:hover': {
-                    borderWidth: '2px',
-                    borderColor: '#059669',
-                    backgroundColor: 'rgba(52, 211, 153, 0.1)'
-                  }
-                }}
-              >
-                Oversee Bookings
-              </Button>
+            <Link to="/admin/bookings" className="rounded-[24px] border border-slate-200 bg-white p-5 text-left transition hover:-translate-y-1">
+              <div className="font-semibold text-slate-900">Review bookings</div>
+              <div className="mt-2 text-sm text-slate-600">Track requests, approvals, and platform-wide activity from one hub.</div>
             </Link>
-          </Grid>
-        </Grid>
-      </Container>
-    </Box>
+          </div>
+        </motion.section>
+      </main>
+    </div>
   );
 };
 

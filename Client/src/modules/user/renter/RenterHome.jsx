@@ -2,51 +2,47 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../../../context/AuthContext';
-import { Container, Grid, Typography, Card, CardContent, Button, Box, CircularProgress, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import HomeWorkIcon from '@mui/icons-material/HomeWork';
-import LogoutIcon from '@mui/icons-material/Logout';
-import SearchIcon from '@mui/icons-material/Search';
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import { ArrowRight, Home, LogOut, Search, Sparkles, BadgeCheck, Clock3 } from 'lucide-react';
 
 const DUMMY_BOOKINGS = [
   {
-    _id: "booking-dummy-1",
+    _id: 'booking-dummy-1',
     startDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
     endDate: new Date(Date.now() + (14 + 180) * 24 * 60 * 60 * 1000).toISOString(),
     status: 'Pending',
     property: {
-      title: "Cozy Brooklyn Studio Apartment",
-      location: "Williamsburg, Brooklyn, NY",
+      title: 'Cozy Brooklyn Studio Apartment',
+      location: 'Williamsburg, Brooklyn, NY',
       rentAmount: 1850,
       owner: {
-        name: "John Landlord",
-        phone: "555-0199"
-      }
+        name: 'John Landlord',
+        phone: '555-0199',
+      },
     },
     renterDetails: {
-      name: "Alice Tenant",
-      occupation: "Graduate Researcher at Chicago Uni"
-    }
+      name: 'Alice Tenant',
+      occupation: 'Graduate Researcher at Chicago Uni',
+    },
   },
   {
-    _id: "booking-dummy-2",
+    _id: 'booking-dummy-2',
     startDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     endDate: new Date(Date.now() + (30 + 365) * 24 * 60 * 60 * 1000).toISOString(),
     status: 'Confirmed',
     property: {
-      title: "Industrial Chic Downtown Loft",
-      location: "Loop District, Chicago, IL",
+      title: 'Industrial Chic Downtown Loft',
+      location: 'Loop District, Chicago, IL',
       rentAmount: 2600,
       owner: {
-        name: "John Landlord",
-        phone: "555-0199"
-      }
+        name: 'John Landlord',
+        phone: '555-0199',
+      },
     },
     renterDetails: {
-      name: "Alice Tenant",
-      occupation: "Lead Architect at Studio Chicago"
-    }
-  }
+      name: 'Alice Tenant',
+      occupation: 'Lead Architect at Studio Chicago',
+    },
+  },
 ];
 
 const RenterHome = () => {
@@ -84,153 +80,117 @@ const RenterHome = () => {
     navigate('/');
   };
 
-  const getStatusChip = (status) => {
-    switch (status) {
-      case 'Confirmed':
-        return <Chip label="Approved" color="success" size="small" sx={{ fontWeight: 700 }} />;
-      case 'Cancelled':
-        return <Chip label="Cancelled" color="error" size="small" sx={{ fontWeight: 700 }} />;
-      default:
-        return <Chip label="Pending Owner Approval" color="warning" size="small" sx={{ fontWeight: 700 }} />;
-    }
-  };
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
   if (loading) {
     return (
-      <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a' }}>
-        <CircularProgress sx={{ color: '#6366f1' }} />
-      </Box>
+      <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,_#f8fafc_0%,_#eef4ff_100%)] text-slate-700">
+        <div className="rounded-3xl border border-slate-200/80 bg-white/80 px-8 py-6 shadow-xl backdrop-blur">Loading your dashboard…</div>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#0f172a', color: '#f8fafc', pb: 8 }}>
-      {/* Header */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-transparent border-bottom border-secondary py-3 mb-5">
-        <div className="container">
-          <Link className="navbar-brand d-flex align-items-center text-white fw-bold fs-3" to="/renter">
-            <HomeWorkIcon sx={{ mr: 1, color: '#6366f1', fontSize: '2rem' }} />
-            HouseHunt <span className="badge bg-indigo ms-2 fs-6" style={{ backgroundColor: '#6366f1' }}>Renter Dashboard</span>
+    <div className="min-h-screen bg-[linear-gradient(135deg,_#f8fafc_0%,_#eef4ff_100%)] px-4 py-4 text-slate-900 sm:px-6 lg:px-8">
+      <header className="mx-auto mb-6 flex max-w-7xl items-center justify-between rounded-[28px] border border-white/70 bg-white/80 px-5 py-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-xl">
+        <Link to="/renter" className="flex items-center gap-3 text-lg font-semibold text-slate-900">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-violet-600 text-white shadow-lg">
+            <Home size={20} />
+          </div>
+          <span className="font-[Poppins] text-xl font-semibold">HouseHunt</span>
+        </Link>
+        <div className="flex items-center gap-3">
+          <div className="hidden text-right md:block">
+            <div className="text-sm font-semibold text-slate-900">{user?.name}</div>
+            <div className="text-xs text-slate-500">{user?.email}</div>
+          </div>
+          <button onClick={handleLogout} className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-rose-500 hover:text-rose-600">
+            <LogOut size={16} /> Logout
+          </button>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl">
+        <div className="flex flex-col gap-4 rounded-[24px] border border-white/80 bg-white/80 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-violet-50 px-3 py-1 text-sm font-semibold text-violet-700">
+              <Sparkles size={16} /> Renter dashboard
+            </div>
+            <h1 className="mt-3 font-[Poppins] text-3xl font-semibold text-slate-900">Welcome back, {user?.name?.split(' ')[0]}!</h1>
+            <p className="mt-2 text-sm text-slate-600">Track your applications and see when an owner approves your request.</p>
+          </div>
+          <Link to="/renter/properties" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:scale-[1.01]">
+            <Search size={16} /> Search properties
+            <ArrowRight size={16} />
           </Link>
-          <div className="d-flex align-items-center gap-3">
-            <Box className="d-none d-md-block text-end">
-              <Typography variant="body2" sx={{ fontWeight: 600 }}>{user?.name}</Typography>
-              <Typography variant="caption" sx={{ color: '#94a3b8' }}>{user?.email}</Typography>
-            </Box>
-            <Button onClick={handleLogout} variant="outlined" color="error" startIcon={<LogoutIcon />} sx={{ borderRadius: '8px' }}>
-              Logout
-            </Button>
+        </div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="rounded-[24px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur">
+            <div className="text-3xl font-semibold text-blue-700">{bookings.length}</div>
+            <div className="mt-2 text-sm text-slate-600">Applications sent</div>
+          </div>
+          <div className="rounded-[24px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur">
+            <div className="text-3xl font-semibold text-emerald-700">{bookings.filter((b) => b.status === 'Confirmed').length}</div>
+            <div className="mt-2 text-sm text-slate-600">Approved requests</div>
+          </div>
+          <div className="rounded-[24px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur">
+            <div className="text-3xl font-semibold text-amber-700">{bookings.filter((b) => b.status === 'Pending').length}</div>
+            <div className="mt-2 text-sm text-slate-600">Pending review</div>
           </div>
         </div>
-      </nav>
 
-      <Container maxWidth="lg">
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5 }}>
-          <Typography variant="h4" sx={{ fontWeight: 800 }}>
-            Welcome back, {user?.name.split(' ')[0]}!
-          </Typography>
-          <Link to="/renter/properties" style={{ textDecoration: 'none' }}>
-            <Button variant="contained" startIcon={<SearchIcon />} sx={{ backgroundColor: '#6366f1', px: 3, py: 1.2, borderRadius: '8px', fontWeight: 600 }}>
-              Search Properties
-            </Button>
-          </Link>
-        </Box>
-
-        {/* Stats Row */}
-        <Grid container spacing={3} sx={{ mb: 6 }}>
-          <Grid item xs={12} sm={4}>
-            <Card sx={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#fff', borderRadius: '16px' }}>
-              <CardContent sx={{ p: 4 }}>
-                <Typography variant="h3" sx={{ fontWeight: 800, color: '#6366f1', mb: 1 }}>
-                  {bookings.length}
-                </Typography>
-                <Typography variant="subtitle2" sx={{ color: '#94a3b8' }}>
-                  Total Applications Sent
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Card sx={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#fff', borderRadius: '16px' }}>
-              <CardContent sx={{ p: 4 }}>
-                <Typography variant="h3" sx={{ fontWeight: 800, color: '#10b981', mb: 1 }}>
-                  {bookings.filter(b => b.status === 'Confirmed').length}
-                </Typography>
-                <Typography variant="subtitle2" sx={{ color: '#94a3b8' }}>
-                  Approved Applications
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={4}>
-            <Card sx={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', color: '#fff', borderRadius: '16px' }}>
-              <CardContent sx={{ p: 4 }}>
-                <Typography variant="h3" sx={{ fontWeight: 800, color: '#fb7185', mb: 1 }}>
-                  {bookings.filter(b => b.status === 'Pending').length}
-                </Typography>
-                <Typography variant="subtitle2" sx={{ color: '#94a3b8' }}>
-                  Pending Verification
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        {/* Recent Applications table */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h5" sx={{ fontWeight: 700, mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}>
-            <FormatListBulletedIcon sx={{ color: '#6366f1' }} /> My Applications & Bookings
-          </Typography>
+        <section className="mt-6 rounded-[24px] border border-white/80 bg-white/80 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur">
+          <div className="mb-5 flex items-center gap-2 text-slate-900">
+            <Clock3 size={18} className="text-blue-600" />
+            <h2 className="font-[Poppins] text-xl font-semibold">My applications & bookings</h2>
+          </div>
 
           {bookings.length === 0 ? (
-            <Box sx={{ textAlign: 'center', py: 6, background: 'rgba(255,255,255,0.01)', borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.1)' }}>
-              <Typography variant="body1" sx={{ color: '#94a3b8', mb: 2 }}>You haven't applied for any rentals yet.</Typography>
-              <Link to="/renter/properties" style={{ textDecoration: 'none' }}>
-                <Button variant="outlined" sx={{ color: '#6366f1', borderColor: '#6366f1' }}>Browse Houses</Button>
-              </Link>
-            </Box>
+            <div className="rounded-[24px] border border-dashed border-slate-300 bg-slate-50/70 px-6 py-12 text-center">
+              <p className="text-sm text-slate-600">You have not applied for any rentals yet.</p>
+              <Link to="/renter/properties" className="mt-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2 text-sm font-semibold text-white">Browse houses</Link>
+            </div>
           ) : (
-            <TableContainer component={Paper} sx={{ backgroundColor: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255, 255, 255, 0.05)', borderRadius: '16px', overflow: 'hidden' }}>
-              <Table>
-                <TableHead sx={{ backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>
-                  <TableRow>
-                    <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Property</TableCell>
-                    <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Location</TableCell>
-                    <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Landlord</TableCell>
-                    <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Rent</TableCell>
-                    <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Rental Period</TableCell>
-                    <TableCell sx={{ color: '#a5b4fc', fontWeight: 700 }}>Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
+            <div className="overflow-hidden rounded-[20px] border border-slate-200">
+              <table className="min-w-full divide-y divide-slate-200 bg-white text-sm">
+                <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                  <tr>
+                    <th className="px-4 py-3">Property</th>
+                    <th className="px-4 py-3">Location</th>
+                    <th className="px-4 py-3">Landlord</th>
+                    <th className="px-4 py-3">Rent</th>
+                    <th className="px-4 py-3">Rental period</th>
+                    <th className="px-4 py-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
                   {bookings.map((booking) => (
-                    <TableRow key={booking._id} sx={{ '&:hover': { backgroundColor: 'rgba(255, 255, 255, 0.02)' } }}>
-                      <TableCell sx={{ color: '#fff', fontWeight: 600 }}>{booking.property?.title}</TableCell>
-                      <TableCell sx={{ color: '#cbd5e1' }}>{booking.property?.location}</TableCell>
-                      <TableCell sx={{ color: '#cbd5e1' }}>
-                        <Typography variant="body2">{booking.property?.owner?.name}</Typography>
-                        <Typography variant="caption" sx={{ color: '#64748b' }}>{booking.property?.owner?.phone}</Typography>
-                      </TableCell>
-                      <TableCell sx={{ color: '#10b981', fontWeight: 700 }}>${booking.property?.rentAmount}/mo</TableCell>
-                      <TableCell sx={{ color: '#cbd5e1' }}>
-                        {formatDate(booking.startDate)} - {formatDate(booking.endDate)}
-                      </TableCell>
-                      <TableCell>
-                        {getStatusChip(booking.status)}
-                      </TableCell>
-                    </TableRow>
+                    <tr key={booking._id} className="hover:bg-slate-50/80">
+                      <td className="px-4 py-3 font-semibold text-slate-900">{booking.property?.title}</td>
+                      <td className="px-4 py-3 text-slate-600">{booking.property?.location}</td>
+                      <td className="px-4 py-3 text-slate-600">
+                        <div>{booking.property?.owner?.name}</div>
+                        <div className="text-xs text-slate-500">{booking.property?.owner?.phone}</div>
+                      </td>
+                      <td className="px-4 py-3 font-semibold text-emerald-700">${booking.property?.rentAmount}/mo</td>
+                      <td className="px-4 py-3 text-slate-600">{formatDate(booking.startDate)} – {formatDate(booking.endDate)}</td>
+                      <td className="px-4 py-3">
+                        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${booking.status === 'Confirmed' ? 'bg-emerald-50 text-emerald-700' : booking.status === 'Cancelled' ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-700'}`}>
+                          {booking.status === 'Confirmed' ? 'Approved by owner' : booking.status === 'Cancelled' ? 'Cancelled' : 'Pending owner approval'}
+                        </span>
+                      </td>
+                    </tr>
                   ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                </tbody>
+              </table>
+            </div>
           )}
-        </Box>
-      </Container>
-    </Box>
+        </section>
+      </main>
+    </div>
   );
 };
 
