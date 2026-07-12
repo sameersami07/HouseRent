@@ -119,7 +119,7 @@ const RenterHome = () => {
               <Sparkles size={16} /> Renter dashboard
             </div>
             <h1 className="mt-3 font-[Poppins] text-3xl font-semibold text-slate-900">Welcome back, {user?.name?.split(' ')[0]}!</h1>
-            <p className="mt-2 text-sm text-slate-600">Track your applications and see when an owner approves your request.</p>
+            <p className="mt-2 text-sm text-slate-600">Track every booking request and see when an owner approves it.</p>
           </div>
           <Link to="/renter/properties" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:scale-[1.01]">
             <Search size={16} /> Search properties

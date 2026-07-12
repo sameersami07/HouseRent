@@ -5,6 +5,7 @@ import { AuthContext } from '../../../context/AuthContext';
 import { ArrowLeft, Home, Sparkles, PlusCircle } from 'lucide-react';
 
 const AMENITY_OPTIONS = ['WiFi', 'Parking', 'Pool', 'Gym', 'Pet-Friendly', 'Air Conditioning', 'Laundry', 'Furnished Kitchen', 'Balcony'];
+const LOCATION_PRESETS = ['Mumbai', 'Delhi', 'Bengaluru', 'Hyderabad', 'Chennai', 'Pune', 'Kolkata', 'Ahmedabad', 'Jaipur', 'Lucknow'];
 
 const AddProperty = () => {
   const { token, user } = useContext(AuthContext);
@@ -17,6 +18,7 @@ const AddProperty = () => {
     rentAmount: '',
     propertyType: 'Apartment',
     furnishingStatus: 'Unfurnished',
+    status: 'Available',
     imageUrlString: '',
   });
 
@@ -45,6 +47,10 @@ const AddProperty = () => {
     }
   };
 
+  const applyLocationPreset = (city) => {
+    setFormData((prev) => ({ ...prev, location: city }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -62,6 +68,7 @@ const AddProperty = () => {
       rentAmount: Number(formData.rentAmount),
       propertyType: formData.propertyType,
       furnishingStatus: formData.furnishingStatus,
+      status: formData.status,
       amenities: selectedAmenities,
       images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=800&q=80'],
     };
@@ -128,6 +135,8 @@ const AddProperty = () => {
               <option value="Condo">Condo</option>
               <option value="Studio">Studio</option>
               <option value="Villa">Villa</option>
+              <option value="Penthouse">Penthouse</option>
+              <option value="Flat">Flat</option>
             </select>
           </div>
 
@@ -136,9 +145,16 @@ const AddProperty = () => {
             <textarea name="description" required rows={4} value={formData.description} onChange={handleChange} placeholder="Describe your home’s best features and neighborhood perks" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" />
           </div>
 
-          <div>
+          <div className="md:col-span-2">
             <label className="mb-2 block text-sm font-semibold text-slate-700">Location</label>
-            <input name="location" required value={formData.location} onChange={handleChange} placeholder="Manhattan, New York" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" />
+            <input name="location" required value={formData.location} onChange={handleChange} placeholder="Mumbai, India" className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white" />
+            <div className="mt-3 flex flex-wrap gap-2">
+              {LOCATION_PRESETS.map((city) => (
+                <button key={city} type="button" onClick={() => applyLocationPreset(city)} className="rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-500 hover:text-blue-600">
+                  {city}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -147,6 +163,14 @@ const AddProperty = () => {
               <option value="Furnished">Furnished</option>
               <option value="Semi-Furnished">Semi-Furnished</option>
               <option value="Unfurnished">Unfurnished</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">Availability</label>
+            <select name="status" value={formData.status} onChange={handleChange} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:bg-white">
+              <option value="Available">Available</option>
+              <option value="Booked">Booked</option>
             </select>
           </div>
 

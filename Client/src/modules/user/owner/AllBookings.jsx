@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../../../context/AuthContext';
-import { ArrowLeft, Building2, Sparkles } from 'lucide-react';
+import { ArrowLeft, Building2, Sparkles, MapPin, ExternalLink } from 'lucide-react';
 
 const AllBookings = () => {
   const { token } = useContext(AuthContext);
@@ -77,7 +77,7 @@ const AllBookings = () => {
             <Sparkles size={16} /> Booking requests
           </div>
           <h1 className="mt-3 font-[Poppins] text-3xl font-semibold text-slate-900">Tenant booking requests</h1>
-          <p className="mt-2 text-sm text-slate-600">Approve, decline, or pause requests while keeping your listings organized.</p>
+          <p className="mt-2 text-sm text-slate-600">Approve, decline, or pause renter requests while keeping your listings organized.</p>
         </div>
 
         {error && <div className="mb-6 rounded-[24px] border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">{error}</div>}
@@ -117,6 +117,25 @@ const AllBookings = () => {
                   </div>
                 </div>
                 {booking.renterDetails?.notes && <div className="mt-4 rounded-2xl bg-slate-50 px-3 py-2 text-sm text-slate-500">Note: {booking.renterDetails.notes}</div>}
+                <div className="mt-4 rounded-[20px] border border-slate-200 bg-slate-50 p-3">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                      <MapPin size={16} className="text-rose-500" /> Property location
+                    </div>
+                    <a href={`https://www.google.com/maps?q=${encodeURIComponent(booking.property?.location || '')}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
+                      Open map <ExternalLink size={14} />
+                    </a>
+                  </div>
+                  <div className="overflow-hidden rounded-2xl border border-slate-200">
+                    <iframe
+                      title={`booking-map-${booking._id}`}
+                      src={`https://www.google.com/maps?q=${encodeURIComponent(booking.property?.location || '')}&output=embed`}
+                      className="h-48 w-full border-0"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 px-3 py-2 text-sm text-blue-700">Renter request status: {booking.status === 'Pending' ? 'Awaiting your approval' : booking.status === 'Confirmed' ? 'Approved for the renter' : 'Rejected for the renter'}</div>
                 <div className="mt-5 flex flex-wrap gap-3">
                   {booking.status === 'Pending' ? (
                     <>
