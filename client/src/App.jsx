@@ -20,9 +20,6 @@ import OwnerBookings from './modules/user/owner/AllBookings';
 
 // Admin Components
 import AdminHome from './modules/admin/AdminHome';
-import AdminUsers from './modules/admin/AllUsers';
-import AdminProperties from './modules/admin/AllProperty';
-import AdminBookings from './modules/admin/AllBookings';
 import AdminAddProperty from './modules/admin/AddProperty';
 
 // Protected Route Wrapper
@@ -194,30 +191,7 @@ function AppContent() {
             </ProtectedRoute>
           } 
         />
-        <Route 
-          path="/admin/users" 
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminUsers />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/admin/properties" 
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminProperties />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/admin/bookings" 
-          element={
-            <ProtectedRoute allowedRoles={['admin']}>
-              <AdminBookings />
-            </ProtectedRoute>
-          } 
-        />
+
         <Route 
           path="/admin/add-property" 
           element={
