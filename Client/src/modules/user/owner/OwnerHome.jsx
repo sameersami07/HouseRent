@@ -8,7 +8,7 @@ import {
   Search, PlusCircle, CheckCircle, Clock, XCircle, ChevronRight, TrendingUp, Users,
   ArrowUpRight, ArrowDownRight, Edit2, Archive, ArrowRight, Share2, Upload, Trash2,
   Video, QrCode, CreditCard, Send, Paperclip, Mic, Smile, Pin, FolderArchive,
-  HelpCircle, Eye, ShieldAlert, Sparkle, Download, Check, AlertCircle, RefreshCw
+  HelpCircle, Eye, ShieldAlert, Sparkle, Download, Check, AlertCircle, RefreshCw, MapPin
 } from 'lucide-react';
 
 const OwnerHome = () => {
