@@ -56,12 +56,19 @@ const AllProperty = () => {
       </header>
 
       <main className="mx-auto max-w-7xl">
-        <div className="mb-6 rounded-[24px] border border-white/80 bg-white/80 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur">
-          <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
-            <Sparkles size={16} /> Platform catalog
+        <div className="mb-6 rounded-[24px] border border-white/80 bg-white/80 p-6 shadow-[0_18px_45px_rgba(15,23,42,0.08)] backdrop-blur flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
+              <Sparkles size={16} /> Platform catalog
+            </div>
+            <h1 className="mt-3 font-[Poppins] text-3xl font-semibold text-slate-900">Listed properties directory</h1>
+            <p className="mt-2 text-sm text-slate-600">Browse every verified listing with a polished, premium overview.</p>
           </div>
-          <h1 className="mt-3 font-[Poppins] text-3xl font-semibold text-slate-900">Listed properties directory</h1>
-          <p className="mt-2 text-sm text-slate-600">Browse every verified listing with a polished, premium overview.</p>
+          <div>
+            <Link to="/admin/add-property" className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:scale-[1.02]">
+              Add New Property
+            </Link>
+          </div>
         </div>
 
         {error && <div className="mb-6 rounded-[24px] border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">{error}</div>}

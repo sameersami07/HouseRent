@@ -153,20 +153,36 @@ const RenterHome = () => {
           </nav>
         </div>
 
-        <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-rose-400 hover:bg-rose-950/20 transition w-full">
-          <LogOut size={18} />
-          Sign out
-        </button>
+        <div className="space-y-2 w-full">
+          {user?.userType === 'admin' && (
+            <Link to="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-blue-400 hover:bg-blue-950/20 transition w-full">
+              <Home size={18} />
+              Admin Dashboard
+            </Link>
+          )}
+          <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-rose-400 hover:bg-rose-950/20 transition w-full">
+            <LogOut size={18} />
+            Sign out
+          </button>
+        </div>
       </aside>
 
       {/* CONTAINER */}
       <main className="flex-1 min-h-screen flex flex-col bg-[radial-gradient(circle_at_top_left,rgba(30,41,59,0.5),transparent_40%)]">
         <header className="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-900/80 px-6 py-4 flex items-center justify-between">
           <span className="text-lg font-bold text-white capitalize">{activeTab} Overview</span>
-          <Link to="/renter/properties" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2 text-xs font-semibold text-white shadow-lg transition hover:scale-[1.02]">
-            <Search size={14} /> Search catalog
-          </Link>
+          <div className="flex items-center gap-3">
+            {user?.userType === 'admin' && (
+              <Link to="/admin/add-property" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2 text-xs font-semibold text-white shadow-lg transition hover:scale-[1.02]">
+                Add New Property
+              </Link>
+            )}
+            <Link to="/renter/properties" className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2 text-xs font-semibold text-white shadow-lg transition hover:scale-[1.02]">
+              <Search size={14} /> Search catalog
+            </Link>
+          </div>
         </header>
+
 
         <div className="p-6 flex-1">
           <AnimatePresence mode="wait">
@@ -209,6 +225,7 @@ const RenterHome = () => {
                             <th className="pb-3">Rent</th>
                             <th className="pb-3">Landlord</th>
                             <th className="pb-3">Status</th>
+                            {user?.userType === 'admin' && <th className="pb-3 text-right">Actions</th>}
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-800/60">
@@ -220,14 +237,42 @@ const RenterHome = () => {
                               <td className="py-4">{b.property?.owner?.name || 'John Landlord'}</td>
                               <td className="py-4">
                                 <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                                  b.status === 'Confirmed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                  b.status === 'Confirmed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 
+                                  b.status === 'Cancelled' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' :
+                                  'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                                 }`}>
                                   {b.status}
                                 </span>
                               </td>
+                              {user?.userType === 'admin' && (
+                                <td className="py-4 text-right">
+                                  {b.status === 'Pending' ? (
+                                    <button
+                                      onClick={async () => {
+                                        if (window.confirm('Accept this booking and process the rent payment?')) {
+                                          try {
+                                            const config = { headers: { Authorization: `Bearer ${token}` } };
+                                            await axios.put(`http://localhost:8000/api/admin/bookings/${b._id}/accept`, {}, config);
+                                            alert('Booking and payment accepted successfully!');
+                                            fetchBookings();
+                                          } catch (err) {
+                                            alert(err.response?.data?.message || 'Failed to accept booking');
+                                          }
+                                        }
+                                      }}
+                                      className="px-2.5 py-1.5 rounded-lg bg-emerald-650 hover:bg-emerald-700 text-[10px] font-bold text-white transition whitespace-nowrap"
+                                    >
+                                      Accept & Pay
+                                    </button>
+                                  ) : (
+                                    <span className="text-[10px] text-slate-500">N/A</span>
+                                  )}
+                                </td>
+                              )}
                             </tr>
                           ))}
                         </tbody>
+
                       </table>
                     </div>
                   </div>

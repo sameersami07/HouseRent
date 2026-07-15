@@ -23,6 +23,7 @@ import AdminHome from './modules/admin/AdminHome';
 import AdminUsers from './modules/admin/AllUsers';
 import AdminProperties from './modules/admin/AllProperty';
 import AdminBookings from './modules/admin/AllBookings';
+import AdminAddProperty from './modules/admin/AddProperty';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -136,7 +137,7 @@ function AppContent() {
         <Route 
           path="/renter" 
           element={
-            <ProtectedRoute allowedRoles={['renter']}>
+            <ProtectedRoute allowedRoles={['renter', 'admin']}>
               <RenterHome />
             </ProtectedRoute>
           } 
@@ -144,7 +145,7 @@ function AppContent() {
         <Route 
           path="/renter/properties" 
           element={
-            <ProtectedRoute allowedRoles={['renter']}>
+            <ProtectedRoute allowedRoles={['renter', 'admin']}>
               <RenterProperties />
             </ProtectedRoute>
           } 
@@ -214,6 +215,14 @@ function AppContent() {
           element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminBookings />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/admin/add-property" 
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminAddProperty />
             </ProtectedRoute>
           } 
         />

@@ -5,9 +5,7 @@ const {
   getAllUsers,
   approveOwner,
   getAllProperties,
-  getAllBookings,
-  acceptBookingAndPayment,
-  createAdminProperty
+  getAllBookings
 } = require('../controllers/adminController');
 const { authMiddleware, restrictTo } = require('../middlewares/authMiddleware');
 
@@ -18,11 +16,7 @@ router.use(restrictTo('admin'));
 router.get('/stats', getStats);
 router.get('/users', getAllUsers);
 router.put('/users/:id/approve', approveOwner);
-router.route('/properties')
-  .get(getAllProperties)
-  .post(createAdminProperty);
+router.get('/properties', getAllProperties);
 router.get('/bookings', getAllBookings);
-router.put('/bookings/:id/accept', acceptBookingAndPayment);
 
 module.exports = router;
-

@@ -194,13 +194,11 @@ const bookProperty = async (req, res) => {
 // Get renter bookings
 const getRenterBookings = async (req, res) => {
   try {
-    const query = req.user.userType === 'admin' ? {} : { tenant: req.user._id };
-    const bookings = await Booking.find(query)
+    const bookings = await Booking.find({ tenant: req.user._id })
       .populate({
         path: 'property',
         populate: { path: 'owner', select: 'name email phone' }
-      })
-      .populate('tenant', 'name email phone');
+      });
     res.json(bookings);
   } catch (error) {
     res.status(500).json({ message: error.message });

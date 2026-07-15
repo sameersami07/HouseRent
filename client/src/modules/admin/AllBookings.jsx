@@ -10,27 +10,42 @@ const AllBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const fetchAllBookings = async () => {
+    try {
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      const res = await axios.get('http://localhost:8000/api/admin/bookings', config);
+      setBookings(res.data);
+    } catch (err) {
+      setError('Failed to fetch platform bookings history');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!token) {
       navigate('/login');
       return;
     }
-
-    const fetchAllBookings = async () => {
-      try {
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-        const res = await axios.get('http://localhost:8000/api/admin/bookings', config);
-        setBookings(res.data);
-      } catch (err) {
-        setError('Failed to fetch platform bookings history');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchAllBookings();
   }, [token, navigate]);
+
+  const handleAcceptBooking = async (id) => {
+    if (!window.confirm('Are you sure you want to accept this booking and process the rent payment?')) {
+      return;
+    }
+    try {
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      await axios.put(`http://localhost:8000/api/admin/bookings/${id}/accept`, {}, config);
+      setSuccess('Booking and payment accepted successfully!');
+      fetchAllBookings();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to accept booking');
+    }
+  };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -68,6 +83,7 @@ const AllBookings = () => {
         </div>
 
         {error && <div className="mb-6 rounded-[24px] border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-600">{error}</div>}
+        {success && <div className="mb-6 rounded-[24px] border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-700">{success}</div>}
 
         {bookings.length === 0 ? (
           <div className="rounded-[24px] border border-dashed border-slate-300 bg-white/70 px-6 py-14 text-center shadow-sm">
@@ -103,6 +119,17 @@ const AllBookings = () => {
                     <div>{formatDate(booking.startDate)} – {formatDate(booking.endDate)}</div>
                   </div>
                 </div>
+
+                {booking.status === 'Pending' && (
+                  <div className="mt-4 flex justify-end border-t border-slate-100 pt-4">
+                    <button
+                      onClick={() => handleAcceptBooking(booking._id)}
+                      className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-5 py-2.5 text-xs font-bold text-white shadow-md hover:scale-[1.01] transition"
+                    >
+                      Accept Booking & Payment
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
