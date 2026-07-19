@@ -52,3 +52,9 @@ npm run dev
 - If `MONGO_URI` is not set, the server uses `mongodb://127.0.0.1:27017/househunt`.
 - Owner registration stays pending until an admin approves the account.
 - The admin panel is seeded with `shaiksameer@gmail.com` and includes user/owner approval functions.
+
+ 
+## Demo video
+- https://drive.google.com/file/d/1JypJt01YkOw7eI6r6nRG4fmtpAxQLwVj/view?usp=drivesdk
+
+ 
